@@ -1,5 +1,5 @@
 import { getConfig } from '../config/global_config'
-import { createPool } from 'mysql'
+import { createPool } from 'mysql2'
 const mysqlConfig = getConfig('/mysqlConfig')
 
 const db = createPool({
@@ -10,4 +10,6 @@ const db = createPool({
   database: mysqlConfig.database,
 })
 
-export { db }
+const promiseDb = db.promise()
+
+export { db, promiseDb }

@@ -20,6 +20,11 @@ const config = {
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
   },
+  cloudinaryConfig: {
+    apiKey: process.env.CLOUD_API_KEY,
+    apiSecret: process.env.CLOUD_API_SECRET,
+    cloudName: process.env.CLOUD_NAME,
+  },
 }
 
 const store = new Confidence.Store(config)

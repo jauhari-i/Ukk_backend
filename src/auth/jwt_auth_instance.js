@@ -53,3 +53,39 @@ export const verifyToken = async (req, res, next) => {
   req.userId = userId
   next()
 }
+
+export const authenticateUser = async (req, res, next) => {
+  const roles = req.roles
+  if (roles !== 0 || roles !== 1 || roles !== 2 || roles !== 3) {
+    return handleError({ statusCode: 401, message: 'Please Login First' }, res)
+  } else {
+    next()
+  }
+}
+
+export const authenticateStaf = async (req, res, next) => {
+  const roles = req.roles
+  if (roles !== 1 || roles !== 2) {
+    return handleError({ statusCode: 403, message: 'Access Forbidden!' }, res)
+  } else {
+    next()
+  }
+}
+
+export const authenticateAdmin = async (req, res, next) => {
+  const roles = req.roles
+  if (roles !== 2 || roles !== 3) {
+    return handleError({ statusCode: 403, message: 'Access Forbidden!' }, res)
+  } else {
+    next()
+  }
+}
+
+export const authenticateSuperAdmin = async (req, res, next) => {
+  const roles = req.roles
+  if (roles !== 3) {
+    return handleError({ statusCode: 403, message: 'Access Forbidden!' }, res)
+  } else {
+    next()
+  }
+}
