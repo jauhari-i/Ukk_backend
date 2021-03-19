@@ -2,6 +2,7 @@ import jsonwebtoken from 'jsonwebtoken'
 import fs from 'fs'
 import { getConfig } from '../config/global_config'
 import { handleError } from '../helpers/error'
+import { UNAUTHORIZED, FORBIDDEN } from 'http-status'
 
 const jwt = jsonwebtoken
 const getKey = keyPath => fs.readFileSync(keyPath, 'utf-8')
@@ -38,54 +39,90 @@ export const verifyToken = async (req, res, next) => {
 
   const token = getToken(req.headers)
   if (!token) {
-    return handleError({ statusCode: 401, message: 'Token is not valid!' })
+    return handleError(
+      { code: UNAUTHORIZED, success: false, message: 'Token is not valid!' },
+      res
+    )
   }
   let decodedToken
   try {
     decodedToken = await jwt.verify(token, publicKey, verifyOptions)
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      return handleError({ statusCode: 401, message: 'Access token expired!' })
+      return handleError(
+        {
+          code: UNAUTHORIZED,
+          success: false,
+          message: 'Access token expired!',
+        },
+        res
+      )
     }
-    return handleError({ statusCode: 401, message: 'Token is not valid!' })
+    return handleError(
+      { code: UNAUTHORIZED, success: false, message: 'Token is not valid!' },
+      res
+    )
   }
-  const userId = decodedToken.sub
-  req.userId = userId
-  next()
+
+  const roles = decodedToken.roles
+  if (roles === 0) {
+    const userId = decodedToken.sub
+    req.roles = roles
+    req.userId = userId
+    next()
+  } else {
+    const stafId = decodedToken.sub
+    req.roles = roles
+    req.stafId = stafId
+    next()
+  }
 }
 
 export const authenticateUser = async (req, res, next) => {
   const roles = req.roles
-  if (roles !== 0 || roles !== 1 || roles !== 2 || roles !== 3) {
-    return handleError({ statusCode: 401, message: 'Please Login First' }, res)
-  } else {
+  if (roles === 0) {
     next()
+  } else {
+    return handleError(
+      { code: UNAUTHORIZED, success: false, message: 'Please Login First' },
+      res
+    )
   }
 }
 
 export const authenticateStaf = async (req, res, next) => {
   const roles = req.roles
-  if (roles !== 1 || roles !== 2) {
-    return handleError({ statusCode: 403, message: 'Access Forbidden!' }, res)
-  } else {
+
+  if (roles === 1 || roles === 2) {
     next()
+  } else {
+    return handleError(
+      { code: FORBIDDEN, success: false, message: 'Access Forbidden!' },
+      res
+    )
   }
 }
 
 export const authenticateAdmin = async (req, res, next) => {
   const roles = req.roles
-  if (roles !== 2 || roles !== 3) {
-    return handleError({ statusCode: 403, message: 'Access Forbidden!' }, res)
-  } else {
+  if (roles === 2 || roles === 3) {
     next()
+  } else {
+    return handleError(
+      { code: FORBIDDEN, success: false, message: 'Access Forbidden!' },
+      res
+    )
   }
 }
 
 export const authenticateSuperAdmin = async (req, res, next) => {
   const roles = req.roles
-  if (roles !== 3) {
-    return handleError({ statusCode: 403, message: 'Access Forbidden!' }, res)
-  } else {
+  if (roles === 3) {
     next()
+  } else {
+    return handleError(
+      { code: FORBIDDEN, success: false, message: 'Access Forbidden!' },
+      res
+    )
   }
 }

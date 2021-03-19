@@ -127,7 +127,7 @@ export const loginStaf = async data => {
           }
         } else {
           const payload = {
-            roles: result.level,
+            roles: Number(result.level),
             email: result.email,
             sub: result.stafId,
           }
