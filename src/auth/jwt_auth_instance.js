@@ -33,6 +33,7 @@ export const getToken = headers => {
 
 export const verifyToken = async (req, res, next) => {
   const publicKey = fs.readFileSync(getConfig('/publicKey'), 'utf8')
+
   const verifyOptions = {
     algorithm: 'RS256',
   }

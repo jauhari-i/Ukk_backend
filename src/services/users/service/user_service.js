@@ -5,9 +5,11 @@ import {
   getUsersPhone,
   getUsersNik,
   updateUser,
+  deleteUser,
+  updatePasswordUser,
 } from '../query/user_query'
 import { OK, NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR } from 'http-status'
-import { validateUpdate } from '../validate/user_validation'
+import { validateUpdate, validatePassword } from '../validate/user_validation'
 
 export const userList = async () => {
   try {
@@ -98,6 +100,65 @@ export const updateProfile = async (userId, data) => {
           code: INTERNAL_SERVER_ERROR,
           success: false,
           message: 'Internal server error',
+        }
+      }
+    }
+  } catch (error) {
+    return error
+  }
+}
+
+export const deleteUsers = async userId => {
+  try {
+    const query = await deleteUser(userId)
+    if (!query) {
+      throw {
+        code: NOT_FOUND,
+        message: 'User not found',
+        success: false,
+      }
+    } else {
+      return {
+        code: OK,
+        message: 'Users is deleted',
+        success: true,
+      }
+    }
+  } catch (error) {
+    return error
+  }
+}
+
+export const updatePassword = async (userId, data) => {
+  try {
+    const validateError = await validatePassword(data)
+    if (validateError) {
+      throw {
+        code: BAD_REQUEST,
+        message: validateError,
+        success: false,
+      }
+    } else {
+      const query = await updatePasswordUser(userId, data)
+      if (!query) {
+        throw {
+          code: INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          success: false,
+        }
+      } else {
+        if (!query.match) {
+          throw {
+            code: BAD_REQUEST,
+            message: 'Old password is not match',
+            success: false,
+          }
+        } else {
+          return {
+            code: OK,
+            message: 'Update password succes',
+            success: true,
+          }
         }
       }
     }

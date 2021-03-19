@@ -1,6 +1,6 @@
 import validates from 'validate.js'
 
-const registerUserRules = async (email, niks, phone) => {
+const updateUserRules = async (email, niks, phone) => {
   return {
     name: {
       presence: true,
@@ -39,7 +39,7 @@ const registerUserRules = async (email, niks, phone) => {
 }
 
 export const validateUpdate = async (email, nik, phone, data) => {
-  const constraints = await registerUserRules(email, nik, phone)
+  const constraints = await updateUserRules(email, nik, phone)
   const validate = await validates(data, constraints)
   if (validate === undefined) {
     return false
@@ -53,6 +53,39 @@ export const validateUpdate = async (email, nik, phone, data) => {
     return validate.picture[0]
   } else if (validate.phoneNumber) {
     return validate.phoneNumber[0]
+  } else {
+    return false
+  }
+}
+
+const passwordRules = {
+  oldPassword: {
+    presence: true,
+  },
+  newPssword: {
+    presence: true,
+    length: {
+      minimum: 8,
+      message: 'must be at least 8 characters',
+    },
+  },
+  confirmPassword: {
+    presence: true,
+    equality: 'password',
+  },
+}
+
+export const validatePassword = async data => {
+  const constraints = passwordRules
+  const validate = await validates(data, constraints)
+  if (validate === undefined) {
+    return false
+  } else if (validate.oldPassword) {
+    return validate.oldPassword[0]
+  } else if (validate.newPassword) {
+    return validate.newPassword[0]
+  } else if (validate.confirmPassword) {
+    return validate.confirmPassword[0]
   } else {
     return false
   }

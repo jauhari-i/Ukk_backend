@@ -148,7 +148,7 @@ export const updatePasswordUser = async (userId, data) => {
 
       return { match: true, result, error, fields }
     } else {
-      return { match: false, fields }
+      return { match: false, error: true, fields }
     }
   } else {
     return false
