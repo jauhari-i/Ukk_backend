@@ -2,8 +2,8 @@ import express from 'express'
 import path from 'path'
 import rateLimit from 'express-rate-limit'
 
-import { router as auth } from './apis/auth_api'
-import { router as users } from './apis/user_api'
+import { router as apiRoute } from './apis'
+
 const router = express.Router()
 
 const apiLimiter = rateLimit({
@@ -15,7 +15,6 @@ router.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'))
 })
 
-router.use('/api/auth', apiLimiter, auth)
-router.use('/api/users', apiLimiter, users)
+router.user('/api', apiLimiter, apiRoute)
 
 export { router }
