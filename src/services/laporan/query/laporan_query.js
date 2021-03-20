@@ -338,3 +338,76 @@ export const deleteQueryAdmin = async reportId => {
     return { notFound: true }
   }
 }
+
+export const detailQuery = async reportId => {
+  const [rows, fields] = await promiseDb.query(
+    'SELECT tb_laporan.*,tb_users.userId,tb_users.name,tb_users.email,tb_users.nik,tb_users.profilePicture, tb_users.phoneNumber FROM tb_laporan INNER JOIN tb_users ON tb_laporan.userId=tb_users.userId WHERE reportId = ?',
+    reportId
+  )
+
+  const detail = rows[0]
+  if (detail) {
+    let result
+    if (detail.stafId) {
+      const query = await promiseDb.query(
+        'SELECT * FROM tb_staf WHERE stafId = ?',
+        detail.stafId
+      )
+
+      const staf = query[0][0]
+
+      result = {
+        reportId: detail.reportId,
+        userId: detail.userId,
+        stafId: detail.stafId,
+        reportText: detail.reportText,
+        reportPicture: detail.reportPicture
+          ? JSON.parse(detail.reportPicture).secure_url
+          : '',
+        responseText: detail.responseText,
+        responseDate: detail.responseDate,
+        isValid: detail.isValid === 1 ? true : false,
+        isDone: detail.isDone === 1 ? true : false,
+        userData: {
+          name: detail.name,
+          nik: detail.nik,
+          email: detail.email,
+          profilePicture: JSON.parse(detail.profilePicture).secure_url,
+          phoneNumber: detail.phoneNumber,
+        },
+        stafData: {
+          name: staf.name,
+          email: staf.email,
+          profilePicture: JSON.parse(staf.profilePicture).secure_url,
+        },
+        createdAt: detail.createdAt,
+      }
+    } else {
+      result = {
+        reportId: detail.reportId,
+        userId: detail.userId,
+        stafId: detail.stafId,
+        reportText: detail.reportText,
+        reportPicture: detail.reportPicture
+          ? JSON.parse(detail.reportPicture).secure_url
+          : '',
+        responseText: detail.responseText,
+        responseDate: detail.responseDate,
+        isValid: detail.isValid === 1 ? true : false,
+        isDone: detail.isDone === 1 ? true : false,
+        userData: {
+          name: detail.name,
+          nik: detail.nik,
+          email: detail.email,
+          profilePicture: JSON.parse(detail.profilePicture).secure_url,
+          phoneNumber: detail.phoneNumber,
+        },
+        createdAt: detail.createdAt,
+      }
+    }
+
+    return { result, fields }
+  } else {
+    return { notFound: true }
+  }
+}

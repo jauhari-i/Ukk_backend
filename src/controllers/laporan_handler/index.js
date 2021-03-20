@@ -7,6 +7,7 @@ import {
   deleteReportAdmin,
   addReport,
   deleteReportUser,
+  detailReport,
 } from '../../services/laporan/service/laporan_service'
 import { handleError } from '../../helpers/error'
 
@@ -99,6 +100,19 @@ export const deleteReportUserHandler = async (req, res) => {
     params: { reportId },
   } = req
   const query = await deleteReportUser(userId, reportId)
+  if (query.success) {
+    res.status(query.code).json(query)
+  } else {
+    handleError(query, res)
+  }
+}
+
+export const detailReportHandler = async (req, res) => {
+  const {
+    params: { reportId },
+  } = req
+
+  const query = await detailReport(reportId)
   if (query.success) {
     res.status(query.code).json(query)
   } else {

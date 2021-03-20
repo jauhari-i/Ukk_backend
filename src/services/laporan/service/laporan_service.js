@@ -7,6 +7,7 @@ import {
   responseQuery,
   validateQuery,
   updateQuery,
+  detailQuery,
 } from '../query/laporan_query'
 import {
   validateLaporan,
@@ -43,6 +44,29 @@ export const listUserReport = async userId => {
       message: 'Get user report success',
       data: query.result,
       success: true,
+    }
+  } catch (error) {
+    return error
+  }
+}
+
+export const detailReport = async reportId => {
+  try {
+    const query = await detailQuery(reportId)
+
+    if (query.notFound) {
+      throw {
+        code: NOT_FOUND,
+        message: 'Report not found',
+        success: false,
+      }
+    } else {
+      return {
+        code: OK,
+        message: 'Get detail success',
+        data: query.result,
+        success: true,
+      }
     }
   } catch (error) {
     return error

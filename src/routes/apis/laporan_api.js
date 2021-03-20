@@ -8,6 +8,7 @@ import {
   responseReportHandler,
   updateReportHandler,
   validateReportHandler,
+  detailReportHandler,
 } from '../../controllers/laporan_handler'
 import {
   verifyToken,
@@ -19,6 +20,12 @@ const router = express.Router()
 
 router.get('/list/all', verifyToken, authenticateStaf, listAllReportHandler)
 router.get('/list/user', verifyToken, authenticateUser, listUserReportHandler)
+router.get(
+  '/detail/:reportId',
+  verifyToken,
+  authenticateUser,
+  detailReportHandler
+)
 router.post('/add', verifyToken, authenticateUser, addReportHandler)
 router.put(
   '/verify/:reportId/valid/:status',
