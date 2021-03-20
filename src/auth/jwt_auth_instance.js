@@ -81,7 +81,7 @@ export const verifyToken = async (req, res, next) => {
 
 export const authenticateUser = async (req, res, next) => {
   const roles = req.roles
-  if (roles === 0) {
+  if (roles === 0 || roles === 1 || roles === 2 || roles === 3) {
     next()
   } else {
     return handleError(
