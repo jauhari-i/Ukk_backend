@@ -15,6 +15,6 @@ router.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'))
 })
 
-router.user('/api', apiLimiter, apiRoute)
+router.use('/api', apiLimiter, apiRoute)
 
 export { router }
