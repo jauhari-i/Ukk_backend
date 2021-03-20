@@ -8,9 +8,17 @@ export default class ErrorConstructor extends Error {
 
 export const handleError = (err, res) => {
   const { code, message } = err
-  return res.status(code).json({
-    status: 'error',
-    code,
-    message,
-  })
+  if (!code) {
+    return res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: 'Internal server error',
+    })
+  } else {
+    return res.status(code).json({
+      status: 'error',
+      code,
+      message,
+    })
+  }
 }

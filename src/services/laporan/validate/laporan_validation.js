@@ -16,3 +16,18 @@ export const validateLaporan = async data => {
     return false
   }
 }
+
+export const validateResponse = async data => {
+  const validate = await validates(data, {
+    response: {
+      presence: true,
+    },
+  })
+  if (validate === undefined) {
+    return false
+  } else if (validate.response) {
+    return validate.response[0]
+  } else {
+    return false
+  }
+}
