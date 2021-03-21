@@ -3,14 +3,32 @@ import {
   excelUserHandler,
   excelStafHandler,
   excelReportHandler,
-  pdfUserHandler,
 } from '../../controllers/doc_hander'
+import {
+  verifyToken,
+  authenticateStaf,
+  authenticateAdmin,
+} from '../../auth/jwt_auth_instance'
 
 const router = express.Router()
 
-router.get('/generate/excel/users', excelUserHandler)
-router.get('/generate/excel/staf', excelStafHandler)
-router.get('/generate/excel/report', excelReportHandler)
-router.get('/generate/pdf/users', pdfUserHandler)
+router.get(
+  '/generate/excel/users',
+  verifyToken,
+  authenticateStaf,
+  excelUserHandler
+)
+router.get(
+  '/generate/excel/staf',
+  verifyToken,
+  authenticateAdmin,
+  excelStafHandler
+)
+router.get(
+  '/generate/excel/report',
+  verifyToken,
+  authenticateStaf,
+  excelReportHandler
+)
 
 export { router }
